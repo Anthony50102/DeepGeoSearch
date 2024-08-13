@@ -18,7 +18,7 @@ def set_random_seed(seed):
     random.seed(seed)
 
 
-def main(config):
+def train(config):
     print_config(config)
     set_random_seed(config['random_seed'])
     model = ModelHandler(config)
@@ -37,6 +37,13 @@ def test(config, gs=False):
 
 
 def build_code_vec_database(config):
+    '''
+    Config Requirements: 
+    'out_dir' or 'pretrained': Location of saved model
+    'index_name': Name of elastic index
+    'index_file': Index setup file
+    'vector_db': Not entirely sure?
+    '''
     print_config(config)
     set_random_seed(config['random_seed'])
     if config['out_dir'] is not None:
@@ -87,11 +94,20 @@ def get_config(config_path="config.yml"):
 
 
 def get_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-config', '--config', required=True, type=str, help='path to the config file')
-    args = vars(parser.parse_args())
-    return args
-
+    parser = argparse.ArgumentParser(description="Script with build and search modes")
+    # Create subparsers for the two modes: build and search
+    subparsers = parser.add_subparsers(dest="mode", required=True, help='Mode of operation: build or search')
+    # Build mode parser
+    build_parser = subparsers.add_parser('build', help='Build mode')
+    build_parser.add_argument('--only-database', action='store_true', required=False, help='Use a pretrained model to create search database')
+    build_parser.add_argument('--config', type=str, required=True, help='Path to the config file')
+    # Search mode parser
+    search_parser = subparsers.add_parser('search', help='Search mode')
+    search_parser.add_argument('--config', type=str, required=True, help='Path to the config file')
+    search_parser.add_argument('search_string', type=str, help='String to search for')
+    args = parser.parse_args()
+    print(vars(args))
+    return vars(args)
 
 def print_config(config):
     print("**************** MODEL CONFIGURATION ****************")
@@ -124,11 +140,26 @@ def load_saved_models(dir):
 
 
 if __name__ == '__main__':
-    original_mask = os.umask(0)
     cfg = get_args()
     config = get_config(cfg['config'])
-    main(config)
-    test(config)
-    build_code_vec_database(config)
-    create_search_engine(config)
-    os.umask(original_mask)
+    if cfg['mode'] == 'build' and cfg['only_database'] is False:
+        # Train the model, build the database
+        train(config)
+        test(config)
+        build_code_vec_database(config)
+    
+    elif cfg['mode'] == 'build' and cfg['only_database'] is True:
+        # Use a pretrained model to build a new search database
+        build_code_vec_database(config)
+
+    elif cfg['mode'] == 'search':
+        if not (os.path.exists(config['pretrained'])):
+            raise ValueError
+        model_handle = ModelHandlerExtend(config)
+        se = search_engine(model_handle=model_handle, config=config)
+        print(se.search_single_query(cfg['search_string']))
+        
+    else:
+        raise ValueError
+
+    # create_search_engine(config)

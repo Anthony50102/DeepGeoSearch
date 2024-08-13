@@ -15,6 +15,12 @@ class Model(object):
     architecture, saving, updating examples, and predicting examples.
     """
 
+    '''
+    Config Requirements: 
+    'model_name'
+    'saved_vocab_file'
+    'num_edge_types'
+    '''
     def __init__(self, config, train_set=None):
         self.config = config
         if config['model_name'] in ['Graph2Search']:
