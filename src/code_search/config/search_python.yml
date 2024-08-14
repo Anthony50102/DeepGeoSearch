@@ -4,16 +4,16 @@ trainset: '/home/CodeSearchNet/resources/data/python/final/jsonl/train/graph_tra
 devset: '/home/CodeSearchNet/resources/data/python/final/jsonl/valid/graph_valid_gnn.jsonl.gz'
 testset: '/home/CodeSearchNet/resources/data/python/final/jsonl/test/graph_test_gnn.jsonl.gz'
 vector_db: '/home/CodeSearchNet/resources/data/python_base_gz'
-saved_vocab_file: '/content/drive/MyDrive/python_vocab_150k_3fre_codenet_128.pkl'
+saved_vocab_file: '/home/t-anthonyp/repos/DeepGeoSearch/src/code_search/data/python_vocab_150k_3fre_codenet_128.pkl' # USED
 pretrained_word_embed_file: ''
-pretrained:
+pretrained: '/home/t-anthonyp/repos/DeepGeoSearch/src/code_search/output/Python_Graph2Search_no_edge_all_test' # USED
 
 # Output
 out_dir: '/home/t-anthonyp/misc'
 index_file: '/home/GeoSearch-main/graph-based-search/config/python_index.json'
 index_name: 'python_code_vecs_colab'
 query_file: '/home/GeoSearch-main/graph-based-search/data/queries.csv'
-answer_file: '/home/GeoSearch-main/graph-based-search/data/Python_GraphAns.csv'
+answer_file: '/home/t-anthonyp/misc/Python_GraphAns.csv' #USED
 save_file: '/content/drive/MyDrive'
 
 

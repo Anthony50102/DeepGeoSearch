@@ -10,6 +10,14 @@ class ModelHandlerExtend(ModelHandler):
     """High level model_handler that trains/validates/tests the network,
     tracks and logs metrics.
     """
+
+    '''
+    Config Requirements: 
+    'out_dir' or 'pretrained'
+    'no_cuda'
+    'cuda_id'
+    'device'
+    '''
     def __init__(self, config):
         self.logger = DummyLogger(config, dirname=config['out_dir'], pretrained=config['pretrained'])
         self.dirname = self.logger.dirname
