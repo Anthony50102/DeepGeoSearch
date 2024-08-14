@@ -1,3 +1,4 @@
+#COnvert to a requirements.txt
 conda install pyg -c pyg
 conda install regex
 conda install conda-forge::elasticsearch
@@ -7,3 +8,11 @@ conda install multiprocess
 conda install -c conda-forge spacy
 python -m spacy download en_core_web_sm
 conda install pandas
+conda install conda-forge::tiktoken
+conda install -c conda-forge umap-learn
+conda install ratelimit
+conda install conda-forge::openai
+conda install anaconda::tenacity
+conda install -c conda-forge sentence-transformers
+conda install conda-forge::transformers
+conda install conda-forge::faiss
