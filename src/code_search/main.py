@@ -105,6 +105,7 @@ def get_args():
     search_parser = subparsers.add_parser('search', help='Search mode')
     search_parser.add_argument('--config', type=str, required=True, help='Path to the config file')
     search_parser.add_argument('search_string', type=str, help='String to search for')
+    search_parser.add_argument('--size', '-s', type=int, required=False, help='Number of search results to return')
     args = parser.parse_args()
     print(vars(args))
     return vars(args)
@@ -157,7 +158,9 @@ if __name__ == '__main__':
             raise ValueError
         model_handle = ModelHandlerExtend(config)
         se = search_engine(model_handle=model_handle, config=config)
-        print(se.search_single_query(cfg['search_string']))
+        response = se.search_single_query(cfg['search_string'], search_size=cfg['size'])
+        import pprint
+        pprint.pprint(response['results'])
         
     else:
         raise ValueError
