@@ -164,5 +164,3 @@ if __name__ == '__main__':
         
     else:
         raise ValueError
-
-    # create_search_engine(config)
