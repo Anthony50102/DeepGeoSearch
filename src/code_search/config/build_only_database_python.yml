@@ -1,20 +1,12 @@
 # Data
-dataset_name: 'python_code_search'
-trainset: '/home/CodeSearchNet/resources/data/python/final/jsonl/train/graph_train_gnn.jsonl.gz'
-devset: '/home/CodeSearchNet/resources/data/python/final/jsonl/valid/graph_valid_gnn.jsonl.gz'
-testset: '/home/CodeSearchNet/resources/data/python/final/jsonl/test/graph_test_gnn.jsonl.gz'
 vector_db: '/home/t-anthonyp/data/code_search_data/CodeSearchNet/resources/data/python_base_gz' # USED
 saved_vocab_file: '/home/t-anthonyp/repos/DeepGeoSearch/src/code_search/data/python_vocab_150k_3fre_codenet_128.pkl' # USED I THINK
-pretrained_word_embed_file: ''
 pretrained: '/home/t-anthonyp/repos/DeepGeoSearch/src/code_search/output/Python_Graph2Search_no_edge_all_test' #USED
 
 # Output
 out_dir:  # USED 
-index_file: '/home/t-anthonyp/repos/DeepGeoSearch/src/code_search/config/python_index.json'
-index_name: 'python_code_vecs_colab'
-query_file: '/home/GeoSearch-main/graph-based-search/data/queries.csv'
-answer_file: '/content/drive/MyDrive/Python_GraphAns.csv'
-save_file: '/content/drive/MyDrive'
+index_file: '/home/t-anthonyp/repos/DeepGeoSearch/src/code_search/config/python_index.json' # USED
+index_name: 'trash' # USED 
 
 
 # Preprocessing

@@ -36,7 +36,7 @@ def test(config, gs=False):
     model_handle.test()
 
 
-def build_code_vec_database(config):
+def build_code_vec_database(config, local=False):
     '''
     Config Requirements: 
     'out_dir' or 'pretrained': Location of saved model
@@ -45,28 +45,35 @@ def build_code_vec_database(config):
     'vector_db': Not entirely sure?
     '''
     print_config(config)
+    print(f"{'#'*16} Building index {'remote' if not local else 'locally'} {'#'*16}")
     set_random_seed(config['random_seed'])
     if config['out_dir'] is not None:
         config['pretrained'] = config['out_dir']
         config['out_dir'] = None
-    client = Elasticsearch(
-        os.getenv('ELASTIC_ENDPOINT'),
-        api_key = os.getenv('ELASTIC_API_KEY'),
-        timeout=30)
-    client.indices.delete(index=config['index_name'], ignore=[404])
-    client = create_index(client, config['index_file'])
-    model_handle = ModelHandlerExtend(config)
-    for file in os.listdir(config['vector_db']):
-        if file.endswith('.gz'):
-            try:
-                print(file)
-                file_path = os.path.join(config['vector_db'], file)
-                model_handle.prepare_vector_db(file_path)
-                model_handle.build_code_vec_database(client)
-                client.indices.refresh(index=config['index_name'])
-            except:
-                continue
-    print('build index successfully')
+    if not local:
+        client = Elasticsearch(
+            os.getenv('ELASTIC_ENDPOINT'),
+            api_key = os.getenv('ELASTIC_API_KEY'),
+            timeout=30)
+        client.indices.delete(index=config['index_name'], ignore=[404])
+        client = create_index(client, config['index_file'])
+        model_handle = ModelHandlerExtend(config)
+        for file in os.listdir(config['vector_db']):
+            if file.endswith('.gz'):
+                try:
+                    print(file)
+                    file_path = os.path.join(config['vector_db'], file)
+                    model_handle.prepare_vector_db(file_path)
+                    model_handle.build_code_vec_database(client)
+                    client.indices.refresh(index=config['index_name'])
+                except:
+                    continue
+        print('built remote index successfully')
+    
+    else: #TODO
+        # Currently just do nothing
+        print("Index not saved due to --local argument")
+
 
 
 def create_search_engine(config):
@@ -101,6 +108,7 @@ def get_args():
     build_parser = subparsers.add_parser('build', help='Build mode')
     build_parser.add_argument('--only-database', action='store_true', required=False, help='Use a pretrained model to create search database')
     build_parser.add_argument('--config', type=str, required=True, help='Path to the config file')
+    build_parser.add_argument('--local', '-l', action='store_true', required=False, help='Save elastic index locally instead of sending data stream')
     # Search mode parser
     search_parser = subparsers.add_parser('search', help='Search mode')
     search_parser.add_argument('--config', type=str, required=True, help='Path to the config file')
@@ -147,11 +155,11 @@ if __name__ == '__main__':
         # Train the model, build the database
         train(config)
         test(config)
-        build_code_vec_database(config)
+        build_code_vec_database(config, local=cfg['local'])
     
     elif cfg['mode'] == 'build' and cfg['only_database'] is True:
         # Use a pretrained model to build a new search database
-        build_code_vec_database(config)
+        build_code_vec_database(config, local=cfg['local'])
 
     elif cfg['mode'] == 'search':
         if not (os.path.exists(config['pretrained'])):
